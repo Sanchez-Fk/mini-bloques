@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mini Bloques — Juguetería</title>
+<link rel="icon" href="img/icono.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400;500;600;700&display=swap">
@@ -23,7 +24,7 @@ html{scroll-behavior:smooth}
 body{margin:0;background:var(--cream);color:var(--ink);font:17px/1.5 Fredoka,system-ui,sans-serif;overflow-x:clip;
   background-image:radial-gradient(circle at 50% 50%,rgba(36,22,61,.045) 0 5px,transparent 6px);background-size:28px 28px}
 h1,h2,h3{font-family:Bungee,Fredoka,sans-serif;font-weight:400;line-height:1.05;margin:0;text-wrap:balance}
-img{display:block;max-width:100%}
+img{display:block;max-width:100%;height:auto}
 button{font:inherit;cursor:pointer;color:inherit}
 :focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .wrap{max-width:1240px;margin:0 auto;padding:0 max(4vw,16px)}
@@ -141,7 +142,7 @@ button{font:inherit;cursor:pointer;color:inherit}
 .back canvas{position:absolute;inset:0;z-index:2;width:100%!important;height:100%!important;touch-action:pan-y;cursor:grab}
 .back canvas:active{cursor:grabbing}
 .has3d .back .fig{opacity:0;transition:opacity .3s}
-.drag{position:absolute;z-index:3;left:50%;top:10px;translate:-50% 0;background:rgba(255,255,255,.9);border:2px solid var(--ink);border-radius:999px;padding:1px 10px;font-size:12px;font-weight:600;white-space:nowrap;opacity:0;transition:opacity .3s}
+.drag{position:absolute;z-index:3;left:8px;bottom:10px;background:rgba(255,255,255,.9);border:2px solid var(--ink);border-radius:999px;padding:1px 10px;font-size:12px;font-weight:600;white-space:nowrap;opacity:0;transition:opacity .3s}
 .has3d .drag{opacity:1}
 .pz{position:absolute;z-index:2;top:10px;left:10px;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:2px 8px;font-size:13px;font-weight:600}
 .flipbtn{position:absolute;z-index:3;right:8px;bottom:8px;min-height:36px;padding:0 12px;border-radius:999px;border:2px solid var(--ink);background:#fff;font-size:14px;font-weight:600;
@@ -523,7 +524,7 @@ if (renderer && window.MODELOS) {
   scene.add(new THREE.HemisphereLight(0xffffff, 0x8a7aa8, 0.6));
 
   const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 200);
-  camera.position.set(0, 2.5, 26);
+  camera.position.set(0, 2.5, 36);
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableZoom = false; controls.enablePan = false; controls.enableDamping = true;
   controls.minPolarAngle = Math.PI * 0.25; controls.maxPolarAngle = Math.PI * 0.62;
@@ -604,7 +605,7 @@ if (renderer && window.MODELOS) {
 
   const resize = () => {
     if (!host) return;
-    const s = host.clientWidth || 300;
+    const s = host.closest('.stage').offsetWidth || 300;
     renderer.setSize(s, s, false); camera.aspect = 1; camera.updateProjectionMatrix();
   };
   const countBelow = (arr, y) => { let lo = 0, hi = arr.length; while (lo < hi) { const m = (lo + hi) >> 1; if (arr[m] <= y) lo = m + 1; else hi = m; } return lo; };
@@ -632,8 +633,8 @@ if (renderer && window.MODELOS) {
       if (active) pivot.remove(active.group);
       active = cache.get(id); pivot.add(active.group);
       host = el; el.appendChild(renderer.domElement); el.closest('.card').classList.add('has3d');
-      pivot.rotation.set(0, 0, 0); camera.position.set(0, 2.5, 26); controls.update();
-      resize(); t0 = performance.now(); lastTouch = -1e9;
+      pivot.rotation.set(0, 0, 0); camera.position.set(0, 2.5, 36); controls.update();
+      resize(); requestAnimationFrame(resize); t0 = performance.now(); lastTouch = -1e9;
       if (!raf) raf = requestAnimationFrame(tick);
     },
     hide(el) {
