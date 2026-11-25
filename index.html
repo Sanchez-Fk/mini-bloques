@@ -80,11 +80,11 @@ button{font:inherit;cursor:pointer;color:inherit}
 .facts b{font-family:Bungee,sans-serif;font-weight:400;color:var(--blueD)}
 
 .shelfwrap{position:relative;align-self:end}
-.figs{position:relative;display:flex;align-items:flex-end;justify-content:center;height:clamp(250px,32vw,420px);padding:0 4%}
-.figs button{position:relative;border:0;background:none;padding:0;flex:1 1 0;margin:0 -3%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.figs{--fh:clamp(190px,25vw,340px);position:relative;display:flex;align-items:flex-end;justify-content:center;padding:0 4%}
+.figs button{position:relative;border:0;background:none;padding:0;flex:0 0 auto;margin:0 calc(var(--fh) * -.2);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .figs button:nth-child(odd){z-index:2}
-.figs img{width:100%;transform-origin:50% 92%;animation:drop .9s var(--spring) both, bob 3.2s ease-in-out infinite;animation-delay:calc(var(--i)*.12s + .2s),calc(var(--i)*-.7s)}
-.figs button:nth-child(3) img{width:118%;margin-left:-9%}
+.figs img{height:var(--fh);width:auto;max-width:none;transform-origin:50% 92%;animation:drop .9s var(--spring) both, bob 3.2s ease-in-out infinite;animation-delay:calc(var(--i)*.12s + .2s),calc(var(--i)*-.7s)}
+.figs button:nth-child(2) img{height:calc(var(--fh) * 1.12)}
 .figs button.jump img{animation:jump .7s var(--spring)}
 @keyframes drop{from{opacity:0;transform:translateY(-120%) rotate(-10deg)}}
 @keyframes bob{50%{transform:translateY(-8px) rotate(1.5deg)}}
@@ -250,11 +250,9 @@ footer a.wa{--c:var(--wa);--d:var(--waD)}
       </div>
       <div class="shelfwrap">
         <div class="figs" aria-label="Algunas figuras de la tienda (toca una para hacerla saltar)">
-          <button style="--i:0" aria-label="Hacer saltar a Odie"><img src="img/figuras/odie.webp" alt="" width="640" height="640"></button>
           <button style="--i:1" aria-label="Hacer saltar a Luffy"><img src="img/figuras/luffy.webp" alt="" width="640" height="640"></button>
           <button style="--i:2" aria-label="Hacer saltar a Picoro"><img src="img/figuras/picoro.webp" alt="" width="640" height="640"></button>
           <button style="--i:3" aria-label="Hacer saltar a Majin Buu"><img src="img/figuras/majin-buu.webp" alt="" width="640" height="640"></button>
-          <button style="--i:4" aria-label="Hacer saltar a Nami"><img src="img/figuras/nami.webp" alt="" width="640" height="640"></button>
         </div>
         <div class="shelf" aria-hidden="true"></div>
       </div>
