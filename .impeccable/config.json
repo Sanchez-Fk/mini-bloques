@@ -29,6 +29,15 @@
         ],
         "createdAt": "2026-11-25T22:50:02.361Z",
         "reason": "Claude: scrolling ribbon text is intentionally edge-to-edge"
+      },
+      {
+        "rule": "tight-leading",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-25T23:00:42.414Z",
+        "reason": "Claude: static-scan artifact; the rendered scan of mini-bloques.vercel.app reports no tight leading and body text uses 1.5"
       }
     ]
   }
