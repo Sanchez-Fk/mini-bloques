@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mini Bloques — Juguetería</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400;500;600;700&display=swap">
+<style>
+/* VOICE: juguetería de barrio, alegre y directa, para pedir rápido desde el celular
+   IDEA: la vitrina de una juguetería: toldo a rayas, repisas de colores y figuras que saltan
+   PICTURE: figuras re-renderizadas como bloques 3D nítidos (img/figuras), con la foto real de la caja al voltear la tarjeta
+   COLOUR and TYPE: rojo toldo, azul cielo, amarillo sol y verde; Bungee (letra de bloques) + Fredoka (redonda, de juguete)
+   LAYOUT: toldo + hero con repisa, cinta animada, cómo pedir, catálogo por series, carrito lateral que envía por WhatsApp */
+:root{color-scheme:light;
+--cream:#FFF7EA;--paper:#FFFFFF;--ink:#24163D;--soft:#6A5C80;--line:#EEDFCB;
+--red:#D3202F;--redD:#9E1424;--blue:#1A66CF;--blueD:#124A97;--sky:#5BB4FF;--yellow:#FFC93C;--yellowD:#E0A100;
+--green:#0F7A4A;--greenD:#09552F;--purple:#8B5CF6;--wa:#0E7A41;--waD:#09552D;
+--r:22px;--spring:cubic-bezier(.34,1.56,.64,1);--out:cubic-bezier(.22,1,.36,1)}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--ink);font:17px/1.5 Fredoka,system-ui,sans-serif;overflow-x:clip;
+  background-image:radial-gradient(circle at 50% 50%,rgba(36,22,61,.045) 0 5px,transparent 6px);background-size:28px 28px}
+h1,h2,h3{font-family:Bungee,Fredoka,sans-serif;font-weight:400;line-height:1.05;margin:0;text-wrap:balance}
+img{display:block;max-width:100%}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(4vw,16px)}
+
+/* Botón tipo bloque (presión hacia abajo) */
+.brick{--c:var(--red);--d:var(--redD);display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border:0;border-radius:14px;
+  background:var(--c);color:#fff;font-weight:700;font-size:17px;text-decoration:none;box-shadow:0 6px 0 var(--d);transform:translateY(0);
+  transition:transform .12s var(--out),box-shadow .12s var(--out),filter .2s}
+.brick:hover{filter:brightness(1.06)}
+.brick:active{transform:translateY(4px);box-shadow:0 2px 0 var(--d)}
+
+/* ---------- Toldo y barra ---------- */
+.awning{position:relative;height:56px;background:repeating-linear-gradient(90deg,var(--red) 0 56px,#fff 56px 112px);z-index:3;filter:drop-shadow(0 6px 0 rgba(36,22,61,.12))}
+.awning::after{content:"";position:absolute;left:0;right:0;top:100%;height:22px;
+  background:radial-gradient(circle at 28px 0,var(--red) 27px,transparent 28px) 0 0/112px 22px repeat-x,
+             radial-gradient(circle at 28px 0,#fff 27px,transparent 28px) 56px 0/112px 22px repeat-x;
+  transform-origin:top;animation:sway 5s ease-in-out infinite}
+@keyframes sway{50%{transform:scaleY(1.12)}}
+.bar{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:4}
+.logo{display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:6px 14px 6px 8px;box-shadow:0 4px 0 rgba(36,22,61,.18);
+  font-family:Bungee,sans-serif;font-size:20px;color:var(--ink);text-decoration:none}
+.logo i{display:inline-grid;grid-template-columns:repeat(2,12px);gap:3px}
+.logo i b{width:12px;height:12px;border-radius:3px;background:var(--red);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.logo i b:nth-child(2){background:var(--yellow)}.logo i b:nth-child(3){background:var(--blue)}.logo i b:nth-child(4){background:var(--green)}
+.logo:hover i b{animation:hop .5s var(--spring) both}.logo:hover i b:nth-child(2){animation-delay:.05s}.logo:hover i b:nth-child(3){animation-delay:.1s}.logo:hover i b:nth-child(4){animation-delay:.15s}
+@keyframes hop{40%{transform:translateY(-6px)}}
+.cartbtn{--c:#fff;--d:rgba(36,22,61,.25);color:var(--ink);min-height:44px;padding:0 16px}
+.cartbtn .n{background:var(--red);color:#fff;border-radius:999px;min-width:26px;height:26px;display:grid;place-items:center;font-size:14px;padding:0 7px}
+.bump{animation:bump .5s var(--spring)}
+@keyframes bump{30%{transform:scale(1.35) rotate(-8deg)}}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;background:linear-gradient(180deg,var(--sky),#8FD0FF 70%,#B9E3FF);color:var(--ink);overflow:hidden;padding-top:40px}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.22) 0 6px,transparent 7px);background-size:36px 36px;pointer-events:none}
+.cloud{position:absolute;width:160px;height:48px;border-radius:999px;background:#fff;opacity:.85;animation:drift linear infinite}
+.cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.cloud::before{width:70px;height:70px;left:24px;top:-34px}.cloud::after{width:52px;height:52px;left:82px;top:-22px}
+.c1{top:70px;left:-200px;animation-duration:48s}.c2{top:190px;left:-200px;transform:scale(.7);animation-duration:64s;animation-delay:-30s}
+@keyframes drift{to{translate:calc(100vw + 400px) 0}}
+.hero .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:end}
+.copy{padding-bottom:clamp(40px,6vw,80px);padding-top:clamp(10px,3vw,40px)}
+.tag{display:inline-flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:6px 14px;font-weight:600;font-size:15px;box-shadow:0 3px 0 rgba(36,22,61,.12)}
+.tag b{width:10px;height:10px;border-radius:3px;background:var(--green);animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{transform:scale(.6);opacity:.5}}
+.hero h1{font-size:clamp(34px,5.6vw,64px);margin:18px 0 0;color:#12305C;text-shadow:0 4px 0 rgba(255,255,255,.7)}
+.hero h1 .w{display:inline-block;animation:wordIn .7s var(--spring) both}
+.hero h1 .y{color:#fff;background:var(--red);padding:0 .14em;border-radius:12px;box-shadow:0 5px 0 var(--redD);text-shadow:none}
+@keyframes wordIn{from{opacity:0;transform:translateY(40px) rotate(6deg) scale(.8)}}
+.hero p{font-size:19px;max-width:30em;margin:18px 0 26px;color:#163B6E;font-weight:500}
+.ctas{display:flex;flex-wrap:wrap;gap:14px}
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.facts span{background:rgba(255,255,255,.7);border-radius:12px;padding:6px 12px;font-size:15px;font-weight:500}
+.facts b{font-family:Bungee,sans-serif;font-weight:400;color:var(--blueD)}
+
+.shelfwrap{position:relative;align-self:end}
+.figs{position:relative;display:flex;align-items:flex-end;justify-content:center;height:clamp(250px,32vw,420px);padding:0 4%}
+.figs button{position:relative;border:0;background:none;padding:0;flex:1 1 0;margin:0 -3%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.figs button:nth-child(odd){z-index:2}
+.figs img{width:100%;transform-origin:50% 92%;animation:drop .9s var(--spring) both, bob 3.2s ease-in-out infinite;animation-delay:calc(var(--i)*.12s + .2s),calc(var(--i)*-.7s)}
+.figs button:nth-child(3) img{width:118%;margin-left:-9%}
+.figs button.jump img{animation:jump .7s var(--spring)}
+@keyframes drop{from{opacity:0;transform:translateY(-120%) rotate(-10deg)}}
+@keyframes bob{50%{transform:translateY(-8px) rotate(1.5deg)}}
+@keyframes jump{0%{transform:scale(1.1,.85)}35%{transform:translateY(-30%) scale(.92,1.1) rotate(-8deg)}70%{transform:translateY(0) scale(1.08,.9)}100%{transform:none}}
+.shelf{height:30px;margin:-14px -6% 0;background:linear-gradient(#C98A4B,#A86A30);border-radius:10px 10px 0 0;box-shadow:inset 0 6px 0 rgba(255,255,255,.25),0 10px 0 #7D4C1E;position:relative;z-index:3}
+
+.fall{position:absolute;top:-30px;width:18px;height:14px;border-radius:3px;opacity:.85;animation:fall linear infinite;pointer-events:none}
+.fall::before{content:"";position:absolute;left:3px;right:3px;top:-4px;height:5px;border-radius:2px 2px 0 0;background:inherit;filter:brightness(1.15)}
+@keyframes fall{to{transform:translateY(720px) rotate(540deg)}}
+
+/* ---------- Cinta ---------- */
+.ribbon{background:var(--yellow);border-block:4px solid var(--ink);overflow:hidden;transform:rotate(-1.2deg);margin:-6px -10px 0;position:relative;z-index:4}
+.ribbon div{display:flex;width:max-content;animation:marquee 26s linear infinite}
+.ribbon span{font-family:Bungee,sans-serif;font-size:17px;padding:12px 0;white-space:nowrap}
+.ribbon span::after{content:"★";margin:0 22px;color:var(--red)}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* ---------- Cómo pedir ---------- */
+.how{padding-block:clamp(48px,6vw,80px) 10px}
+.secth{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:24px}
+.secth h2{font-size:clamp(28px,3.6vw,42px)}
+.secth p{margin:6px 0 0;color:var(--soft)}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;padding-top:14px}
+.step{--c:var(--red);position:relative;background:var(--c);color:#fff;border-radius:18px;padding:22px 22px 24px;box-shadow:0 8px 0 rgba(36,22,61,.2)}
+.step::before{content:"";position:absolute;top:-14px;left:16%;right:16%;height:16px;
+  background:radial-gradient(circle at 50% 100%,var(--c) 0 13px,transparent 14px) 0 0/33.33% 100% repeat-x;filter:brightness(1.12)}
+.step:nth-child(2){--c:var(--blue)}.step:nth-child(3){--c:var(--green)}
+.step .num{font-family:Bungee,sans-serif;font-size:34px;line-height:1;opacity:.9}
+.step h3{font-size:21px;margin:10px 0 6px}
+.step p{margin:0;font-size:16px;opacity:.95}
+
+/* ---------- Catálogo ---------- */
+.shop{padding-block:clamp(48px,6vw,80px)}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{min-height:44px;padding:0 18px;border-radius:999px;border:3px solid var(--ink);background:#fff;font-weight:600;box-shadow:0 4px 0 var(--ink);transition:transform .12s var(--out),box-shadow .12s var(--out),background .2s}
+.chip:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.chip[aria-pressed=true]{background:var(--yellow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:26px 22px}
+.card{--tone:var(--red);--tint:#FFE1D6;background:var(--paper);border-radius:var(--r);border:3px solid var(--ink);box-shadow:0 8px 0 var(--ink);display:flex;flex-direction:column;
+  transition:transform .35s var(--spring),box-shadow .35s var(--spring)}
+.card.pop{animation:pop .6s var(--spring) both;animation-delay:calc(var(--k)*45ms)}
+@keyframes pop{from{opacity:0;transform:translateY(30px) scale(.9)}}
+.card[hidden]{display:none}
+@media(hover:hover){.card:hover{transform:translateY(-6px) rotate(-.6deg);box-shadow:0 14px 0 var(--ink)}
+  .card:hover .boximg{transform:scale(1.05) rotate(-1deg)}}
+.stage{position:relative;aspect-ratio:1;perspective:900px;margin:10px 10px 0}
+.flip{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s var(--spring)}
+.flipped .flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:16px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.front{background:#eee}
+.boximg{width:100%;height:100%;object-fit:cover;transition:transform .45s var(--spring)}
+.back{transform:rotateY(180deg);background:var(--tint);background-image:radial-gradient(circle at 50% 50%,rgba(255,255,255,.55) 0 7px,transparent 8px);background-size:26px 26px}
+.back::after{content:"";position:absolute;left:0;right:0;bottom:0;height:16%;background:var(--tone);opacity:.28;pointer-events:none}
+.fig{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;padding:6%}
+.back canvas{position:absolute;inset:0;z-index:2;width:100%!important;height:100%!important;touch-action:pan-y;cursor:grab}
+.back canvas:active{cursor:grabbing}
+.has3d .back .fig{opacity:0;transition:opacity .3s}
+.drag{position:absolute;z-index:3;left:50%;top:10px;translate:-50% 0;background:rgba(255,255,255,.9);border:2px solid var(--ink);border-radius:999px;padding:1px 10px;font-size:12px;font-weight:600;white-space:nowrap;opacity:0;transition:opacity .3s}
+.has3d .drag{opacity:1}
+.pz{position:absolute;z-index:2;top:10px;left:10px;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:2px 8px;font-size:13px;font-weight:600}
+.flipbtn{position:absolute;z-index:3;right:8px;bottom:8px;min-height:36px;padding:0 12px;border-radius:999px;border:2px solid var(--ink);background:#fff;font-size:14px;font-weight:600;
+  display:flex;align-items:center;gap:6px;transition:transform .2s var(--spring)}
+.flipbtn:hover{transform:scale(1.06)}
+.flipbtn svg{transition:transform .5s var(--spring)}.flipped .flipbtn svg{transform:rotate(180deg)}
+.card .b{padding:12px 16px 18px;display:flex;flex-direction:column;gap:4px;flex:1}
+.serie{align-self:flex-start;font-size:13px;font-weight:600;color:#fff;background:var(--tone);border-radius:999px;padding:2px 10px}
+.card h3{font-size:22px;margin-top:4px}
+.price{font-weight:600;color:var(--soft);margin-bottom:10px}
+.add{--c:var(--tone);--d:var(--ink);width:100%;margin-top:auto;min-height:46px}
+.qty{display:flex;align-items:center;justify-content:space-between;margin-top:auto;border:3px solid var(--ink);border-radius:14px;min-height:46px;background:var(--tint);animation:pop .4s var(--spring)}
+.qty button{width:44px;height:40px;border:0;background:none;font-size:24px;font-weight:700;border-radius:10px}
+.qty button:active{transform:scale(.85)}
+.qty span{font-weight:600}
+.note{font-size:15px;color:var(--soft);margin-top:30px;text-align:center}
+
+/* Series */
+.s-dbz{--tone:#C24E00;--tint:#FFE6CC}
+.s-op{--tone:#1A66CF;--tint:#D9ECFF}
+.s-gar{--tone:#A86F00;--tint:#FFF2BF}
+
+/* ---------- Footer ---------- */
+footer{background:var(--ink);color:#DCD3EC;padding-block:44px 90px;margin-top:20px;position:relative}
+footer::before{content:"";position:absolute;left:0;right:0;top:-18px;height:18px;
+  background:radial-gradient(circle at 50% 100%,var(--ink) 0 12px,transparent 13px) 0 0/40px 100% repeat-x}
+footer .wrap{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
+footer .logo{box-shadow:none}
+footer a.wa{--c:var(--wa);--d:var(--waD)}
+
+/* ---------- Carrito ---------- */
+.float{--c:var(--red);--d:var(--redD);position:fixed;right:16px;bottom:22px;z-index:20;color:#fff;animation:pop .5s var(--spring)}
+.float .n{background:#fff;color:var(--redD)}
+.float[hidden]{display:none}
+.flyer{position:fixed;z-index:50;pointer-events:none;object-fit:contain}
+.scrim{position:fixed;inset:0;background:rgba(36,22,61,.5);z-index:30;opacity:0;pointer-events:none;transition:opacity .25s}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(430px,100%);background:var(--cream);z-index:31;display:flex;flex-direction:column;
+  transform:translateX(105%);transition:transform .5s var(--out);border-left:4px solid var(--ink)}
+.open .scrim{opacity:1;pointer-events:auto}.open .drawer{transform:none}
+.dh{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--yellow);border-bottom:4px solid var(--ink)}
+.dh h2{font-size:22px}
+.x{width:44px;height:44px;border-radius:12px;border:3px solid var(--ink);background:#fff;font-size:22px;line-height:1}
+.items{flex:1;overflow:auto;padding:8px 20px}
+.it{display:grid;grid-template-columns:68px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;border-bottom:2px dashed var(--line);animation:slideIn .4s var(--out) both}
+@keyframes slideIn{from{opacity:0;transform:translateX(24px)}}
+.it img{width:68px;height:68px;border-radius:14px;object-fit:contain;padding:4px;background:var(--tint);border:2px solid var(--ink)}
+.it b{display:block;font-size:16px}.it small{color:var(--soft);font-size:13px}
+.it .qty{width:116px;min-height:40px;border-width:2px;animation:none}.it .qty button{width:36px;height:36px;font-size:20px}
+.rm{border:0;background:none;color:var(--soft);font-size:13px;text-decoration:underline;padding:4px 0;min-height:32px}
+.empty{text-align:center;color:var(--soft);padding:40px 8px}
+.empty img{width:140px;margin:0 auto 10px;animation:bob 3s ease-in-out infinite}
+.df{border-top:4px solid var(--ink);padding:16px 20px 20px;display:grid;gap:10px;background:#fff}
+.df label{font-size:15px;font-weight:600;display:grid;gap:4px}
+.df input,.df textarea{font:16px Fredoka,sans-serif;padding:10px 12px;border-radius:12px;border:2px solid var(--ink);background:var(--cream);color:var(--ink);width:100%}
+.df textarea{min-height:60px;resize:vertical}
+.tot{display:flex;justify-content:space-between;font-weight:700;font-size:18px}
+.order{--c:var(--wa);--d:var(--waD);min-height:54px;font-size:18px}
+.order[aria-disabled=true]{opacity:.45;pointer-events:none}
+.err{color:#C0263A;font-size:14px;min-height:1em;margin:0}
+.hint{font-size:13px;color:var(--soft);margin:0;text-align:center}
+
+/* Reveal al hacer scroll */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .6s var(--out),transform .7s var(--spring)}
+.rv.in{opacity:1;transform:none}
+
+@media(max-width:860px){
+  .hero .wrap{grid-template-columns:minmax(0,1fr)}
+  .copy{padding-bottom:10px;text-align:center}.hero p{margin-inline:auto}.ctas,.facts{justify-content:center}
+  .steps{grid-template-columns:minmax(0,1fr);gap:30px}
+}
+@media(max-width:600px){
+  body{font-size:16px}
+  .awning{height:52px}.logo{font-size:16px}.logo i{grid-template-columns:repeat(2,10px)}.logo i b{width:10px;height:10px}
+  .bar .cartbtn .lbl{display:none}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
+  .card{box-shadow:0 6px 0 var(--ink);border-width:2px}
+  .card h3{font-size:16px}.card .b{padding:10px 10px 12px}.stage{margin:6px 6px 0}
+  .flipbtn .t{display:none}.flipbtn{padding:0 9px}
+  .add{font-size:15px;padding:0 8px}
+  .hero h1{font-size:34px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .fall,.cloud{display:none}.rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="awning">
+    <div class="wrap bar">
+      <a class="logo" href="#"><i aria-hidden="true"><b></b><b></b><b></b><b></b></i>Mini Bloques</a>
+      <button class="brick cartbtn" id="openTop" aria-label="Abrir carrito"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11h11L21 8H6.2"/><circle cx="9.5" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg><span class="lbl">Carrito</span><span class="n" id="countTop">0</span></button>
+    </div>
+  </div>
+  <section class="hero" id="hero">
+    <span class="cloud c1" aria-hidden="true"></span><span class="cloud c2" aria-hidden="true"></span>
+    <div class="wrap">
+      <div class="copy">
+        <span class="tag"><b></b>Juguetería de mini bloques</span>
+        <h1><span class="w" style="animation-delay:.05s">Arma</span> <span class="w" style="animation-delay:.12s">tu</span> <span class="w" style="animation-delay:.19s">personaje</span> <span class="w" style="animation-delay:.26s">favorito,</span> <span class="w y" style="animation-delay:.4s">bloque</span> <span class="w y" style="animation-delay:.47s">a</span> <span class="w y" style="animation-delay:.54s">bloque</span></h1>
+        <p>Figuras de mini bloques con más de 400 piezas por caja. Elige las que quieras, agrégalas al carrito y envíame el pedido por WhatsApp.</p>
+        <div class="ctas"><a class="brick" href="#catalogo">Ver catálogo</a><a class="brick" style="--c:#fff;--d:rgba(36,22,61,.25);color:var(--ink)" href="#como">¿Cómo pedir?</a></div>
+        <div class="facts"><span><b>14</b> personajes</span><span><b>442–716</b> piezas</span><span>Edad <b>6+</b></span></div>
+      </div>
+      <div class="shelfwrap">
+        <div class="figs" aria-label="Algunas figuras de la tienda (toca una para hacerla saltar)">
+          <button style="--i:0" aria-label="Hacer saltar a Odie"><img src="img/figuras/odie.webp" alt="" width="640" height="640"></button>
+          <button style="--i:1" aria-label="Hacer saltar a Luffy"><img src="img/figuras/luffy.webp" alt="" width="640" height="640"></button>
+          <button style="--i:2" aria-label="Hacer saltar a Picoro"><img src="img/figuras/picoro.webp" alt="" width="640" height="640"></button>
+          <button style="--i:3" aria-label="Hacer saltar a Majin Buu"><img src="img/figuras/majin-buu.webp" alt="" width="640" height="640"></button>
+          <button style="--i:4" aria-label="Hacer saltar a Nami"><img src="img/figuras/nami.webp" alt="" width="640" height="640"></button>
+        </div>
+        <div class="shelf" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+  <div class="ribbon" aria-hidden="true"><div>
+    <span>Más de 400 piezas por caja</span><span>Pedidos por WhatsApp</span><span>Ideal para regalar</span><span>Dragon Ball Z</span><span>One Piece</span><span>Garfield</span>
+    <span>Más de 400 piezas por caja</span><span>Pedidos por WhatsApp</span><span>Ideal para regalar</span><span>Dragon Ball Z</span><span>One Piece</span><span>Garfield</span>
+  </div></div>
+</header>
+
+<section class="wrap how" id="como">
+  <div class="secth rv"><div><h2>¿Cómo pedir?</h2><p>Tres pasos y listo, sin registrarte.</p></div></div>
+  <div class="steps">
+    <div class="step rv"><div class="num">1</div><h3>Elige</h3><p>Agrega al carrito las figuras que quieras. Voltea la tarjeta para ver el personaje armado en 3D.</p></div>
+    <div class="step rv" style="transition-delay:.08s"><div class="num">2</div><h3>Escribe tus datos</h3><p>Tu nombre y el barrio o ciudad de entrega.</p></div>
+    <div class="step rv" style="transition-delay:.16s"><div class="num">3</div><h3>Envía por WhatsApp</h3><p>Se abre el chat con tu pedido listo; ahí confirmamos precio, pago y entrega.</p></div>
+  </div>
+</section>
+
+<main class="wrap shop" id="catalogo">
+  <div class="secth rv">
+    <div><h2>Catálogo</h2><p>Toca “Ver en 3D” para ver el personaje armado y girarlo.</p></div>
+    <div class="chips" id="chips" role="group" aria-label="Filtrar por serie"></div>
+  </div>
+  <div class="grid" id="grid"></div>
+  <p class="note">El pedido llega a mi WhatsApp; ahí confirmamos precio, pago y entrega.</p>
+</main>
+
+<footer><div class="wrap">
+  <a class="logo" href="#"><i aria-hidden="true"><b></b><b></b><b></b><b></b></i>Mini Bloques</a>
+  <a class="brick wa" href="https://wa.me/573052624583" target="_blank" rel="noopener">Pedidos: +57 305 262 4583</a>
+</div></footer>
+
+<button class="brick cartbtn float" id="openFloat" hidden aria-label="Abrir carrito"><span class="lbl">Ver pedido</span><span class="n" id="countFloat">0</span></button>
+
+<div id="cartRoot">
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle" aria-hidden="true">
+    <div class="dh"><h2 id="cartTitle">Tu pedido</h2><button class="x" id="close" aria-label="Cerrar carrito">×</button></div>
+    <div class="items" id="items"></div>
+    <form class="df" id="form" novalidate>
+      <div class="tot" id="tot"></div>
+      <label for="nombre">Tu nombre<input id="nombre" autocomplete="name" placeholder="Ej: Laura Gómez"></label>
+      <label for="zona">Barrio o ciudad de entrega<input id="zona" placeholder="Ej: Belén, Medellín"></label>
+      <label for="nota">Nota (opcional)<textarea id="nota" placeholder="Ej: es para regalo"></textarea></label>
+      <p class="err" id="err" role="alert"></p>
+      <a class="brick order" id="order" href="#" target="_blank" rel="noopener" aria-disabled="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7c.1.2 1.9 2.9 4.6 4 1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2Z"/></svg>Realizar pedido</a>
+      <p class="hint">Se abre WhatsApp con tu pedido listo para enviar a +57 305 262 4583.</p>
+    </form>
+  </aside>
+</div>
+
+<script>
+{
+const WHATSAPP = '573052624583';
+// Precio en pesos de cada producto. Déjalo en null para mostrar "Precio por WhatsApp".
+// fig = figura renderizada en bloques (img/figuras), box = foto real de la caja.
+const P = (id,name,serie,pz,price=null)=>({id,name,serie,pz,price,fig:'img/figuras/'+id+'.webp',box:'img/'+id+'.jpg'});
+const PRODUCTS = [
+  P('majin-buu','Majin Buu','Dragon Ball Z',580),
+  P('androide-18','Androide N18','Dragon Ball Z',586),
+  P('rochi','Rochi','Dragon Ball Z',613),
+  P('mr-satan','Mr. Satan','Dragon Ball Z',608),
+  P('trunks','Trunks','Dragon Ball Z',597),
+  P('crillin','Crillin','Dragon Ball Z',687),
+  P('picoro','Picoro','Dragon Ball Z',687),
+  P('gohan','Gohan','Dragon Ball Z',598),
+  P('king-cold','King Cold','Dragon Ball Z',555),
+  P('luffy','Luffy','One Piece',666),
+  P('sanji','Sanji','One Piece',442),
+  P('nami','Nami','One Piece',618),
+  P('trafalgar','Trafalgar','One Piece',716),
+  P('odie','Odie','Garfield',613),
+];
+const SERIE_CLASS = {'Dragon Ball Z':'s-dbz','One Piece':'s-op','Garfield':'s-gar'};
+const byId = Object.fromEntries(PRODUCTS.map(p=>[p.id,p]));
+const fmt = n => '$' + n.toLocaleString('es-CO');
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let cart = {}, filter = 'Todos';
+try{ const s = JSON.parse(localStorage.getItem('mb-cart')||'{}'); for(const k in s) if(byId[k] && s[k]>0) cart[k]=Math.min(99,s[k]|0); }catch(e){}
+const save = ()=>{ try{ localStorage.setItem('mb-cart',JSON.stringify(cart)); }catch(e){} };
+const $ = id => document.getElementById(id);
+
+const series = ['Todos', ...new Set(PRODUCTS.map(p=>p.serie))];
+const renderChips = () => { $('chips').innerHTML = series.map(s=>`<button class="chip" data-s="${esc(s)}" aria-pressed="${s===filter}">${esc(s)}</button>`).join(''); };
+const control = p => cart[p.id]
+  ? `<div class="qty"><button data-dec="${p.id}" aria-label="Quitar uno de ${esc(p.name)}">−</button><span aria-live="polite">${cart[p.id]} en el carrito</span><button data-inc="${p.id}" aria-label="Agregar otro ${esc(p.name)}">+</button></div>`
+  : `<button class="brick add" data-inc="${p.id}">Agregar al carrito</button>`;
+const renderGrid = () => {
+  $('grid').innerHTML = PRODUCTS.map(p=>`
+    <article class="card ${SERIE_CLASS[p.serie]||''}" data-id="${p.id}" data-serie="${esc(p.serie)}">
+      <div class="stage">
+        <div class="flip">
+          <div class="face front"><img class="boximg" src="${p.box}" alt="Caja de mini bloques de ${esc(p.name)}" loading="lazy" width="450" height="450"></div>
+          <div class="face back"><img class="fig" src="${p.fig}" alt="Figura armada de ${esc(p.name)}" loading="lazy" width="640" height="640"><span class="drag">Arrastra para girar</span></div>
+        </div>
+        <span class="pz">${p.pz} piezas</span>
+        <button class="flipbtn" data-flip="${p.id}" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg><span class="t">Ver en 3D</span></button>
+      </div>
+      <div class="b"><span class="serie">${esc(p.serie)}</span><h3>${esc(p.name)}</h3>
+      <span class="price">${p.price!=null?fmt(p.price):'Precio por WhatsApp'} · 6+</span>
+      <div class="ctl">${control(p)}</div></div>
+    </article>`).join('');
+  applyFilter(true);
+};
+const applyFilter = (first) => {
+  let k = 0;
+  document.querySelectorAll('.card').forEach(c => {
+    const show = filter==='Todos' || c.dataset.serie===filter;
+    c.hidden = !show;
+    c.classList.remove('pop');
+    if(show && !reduced){ void c.offsetWidth; c.style.setProperty('--k', k++); if(!first) c.classList.add('pop'); }
+  });
+};
+const updateControls = () => document.querySelectorAll('.card').forEach(c => { const ctl = c.querySelector('.ctl'), html = control(byId[c.dataset.id]); if(ctl.dataset.h!==html){ ctl.innerHTML = html; ctl.dataset.h = html; } });
+
+const count = () => Object.values(cart).reduce((a,b)=>a+b,0);
+const lines = () => Object.entries(cart).map(([id,q])=>({p:byId[id],q}));
+const allPriced = () => lines().every(l=>l.p.price!=null);
+const total = () => lines().reduce((a,l)=>a+l.q*(l.p.price||0),0);
+const renderCart = () => {
+  const n = count();
+  $('countTop').textContent = n; $('countFloat').textContent = n; $('openFloat').hidden = n===0;
+  $('items').innerHTML = n ? lines().map(({p,q},i)=>`
+    <div class="it ${SERIE_CLASS[p.serie]||''}" style="animation-delay:${i*40}ms"><img src="${p.fig}" alt=""><div><b>${esc(p.name)}</b><small>${esc(p.serie)} · ${p.pz} piezas${p.price!=null?' · '+fmt(p.price):''}</small><br><button class="rm" data-rm="${p.id}">Quitar</button></div>
+    <div class="qty"><button data-dec="${p.id}" aria-label="Quitar uno de ${esc(p.name)}">−</button><span>${q}</span><button data-inc="${p.id}" aria-label="Agregar otro ${esc(p.name)}">+</button></div></div>`).join('')
+    : `<div class="empty"><img src="img/figuras/odie.webp" alt="">Tu carrito está vacío.<br>Agrega figuras desde el catálogo.</div>`;
+  $('tot').innerHTML = n ? `<span>${n} ${n===1?'figura':'figuras'}</span><span>${allPriced()?fmt(total()):'Total por confirmar'}</span>` : '';
+  updateLink();
+};
+const message = () => {
+  const name = $('nombre').value.trim(), zona = $('zona').value.trim(), nota = $('nota').value.trim();
+  let m = `¡Hola! Quiero hacer este pedido de mini bloques:\n\n`;
+  m += lines().map(({p,q})=>`• ${q} x ${p.name} (${p.serie})${p.price!=null?' — '+fmt(p.price*q):''}`).join('\n');
+  m += `\n\nTotal: ${count()} ${count()===1?'figura':'figuras'}${allPriced()?' — '+fmt(total()):''}`;
+  m += `\nNombre: ${name}\nEntrega: ${zona}`;
+  if(nota) m += `\nNota: ${nota}`;
+  return m;
+};
+const updateLink = () => {
+  const ok = count()>0 && $('nombre').value.trim() && $('zona').value.trim();
+  const a = $('order');
+  a.setAttribute('aria-disabled', count()===0 ? 'true' : 'false');
+  a.href = ok ? `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message())}` : '#';
+};
+const bump = () => ['countTop','countFloat'].forEach(id => { const el=$(id); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); });
+
+// La figura "vuela" desde la tarjeta hasta el botón del carrito
+const flyToCart = (id) => {
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  const src = card && card.querySelector(card.classList.contains('flipped') ? '.fig' : '.boximg');
+  const target = !$('openFloat').hidden ? $('openFloat') : $('openTop');
+  if(reduced || !src || !target){ bump(); return; }
+  const a = src.getBoundingClientRect(), b = target.getBoundingClientRect();
+  if(a.bottom < 0 || a.top > innerHeight){ bump(); return; }
+  const f = document.createElement('img');
+  f.src = src.src; f.className = 'flyer'; f.alt = '';
+  Object.assign(f.style,{left:a.left+'px',top:a.top+'px',width:a.width+'px',height:a.height+'px'});
+  document.body.appendChild(f);
+  const dx = b.left + b.width/2 - (a.left + a.width/2), dy = b.top + b.height/2 - (a.top + a.height/2);
+  f.animate([
+    {transform:'translate(0,0) scale(1) rotate(0)',opacity:1},
+    {transform:`translate(${dx*.45}px,${dy*.45-120}px) scale(.55) rotate(-20deg)`,opacity:1,offset:.5},
+    {transform:`translate(${dx}px,${dy}px) scale(.12) rotate(-40deg)`,opacity:.4}
+  ],{duration:750,easing:'cubic-bezier(.45,0,.55,1)'}).onfinish = () => { f.remove(); bump(); };
+};
+
+const change = (id,d) => {
+  const before = count();
+  const q=(cart[id]||0)+d; if(q<=0) delete cart[id]; else cart[id]=Math.min(99,q);
+  save(); renderCart(); updateControls();
+  if(d>0 && count()>before) flyToCart(id); else bump();
+};
+
+const setFlip = (c,on) => {
+  c.classList.toggle('flipped',on);
+  const b = c.querySelector('.flipbtn'); b.setAttribute('aria-pressed',on); b.querySelector('.t').textContent = on?'Ver caja':'Ver en 3D';
+  if(window.Visor3D){ if(on) Visor3D.show(c.dataset.id, c.querySelector('.back')); else Visor3D.hide(c.querySelector('.back')); }
+};
+
+let lastFocus = null;
+const open = () => { lastFocus=document.activeElement; document.body.classList.add('open'); $('drawer').setAttribute('aria-hidden','false'); $('close').focus(); };
+const close = () => { document.body.classList.remove('open'); $('drawer').setAttribute('aria-hidden','true'); if(lastFocus) lastFocus.focus(); };
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('button,a'); if(!t) return;
+  if(t.dataset.inc){
+    const inCard = t.closest('.card');
+    change(t.dataset.inc,1);
+    if(inCard){ const q = inCard.querySelector('[data-inc]'); if(q && document.activeElement===document.body) q.focus(); }
+  }
+  else if(t.dataset.dec) change(t.dataset.dec,-1);
+  else if(t.dataset.rm){ delete cart[t.dataset.rm]; save(); renderCart(); updateControls(); bump(); }
+  else if(t.dataset.s){ filter=t.dataset.s; renderChips(); applyFilter(false); }
+  else if(t.dataset.flip){
+    const c=t.closest('.card'), on=!c.classList.contains('flipped');
+    // Solo una tarjeta volteada a la vez: comparten un único visor 3D
+    document.querySelectorAll('.card.flipped').forEach(o => { if(o!==c) setFlip(o,false); });
+    setFlip(c,on);
+  }
+  else if(t.closest('.figs')){ t.classList.remove('jump'); void t.offsetWidth; t.classList.add('jump'); }
+  else if(t.id==='openTop'||t.id==='openFloat') open();
+  else if(t.id==='close') close();
+  else if(t.id==='order'){
+    const miss = !$('nombre').value.trim() ? 'nombre' : !$('zona').value.trim() ? 'zona' : '';
+    if(count()===0){ e.preventDefault(); return; }
+    if(miss){ e.preventDefault(); $('err').textContent = miss==='nombre' ? 'Escribe tu nombre para enviar el pedido.' : 'Escribe el barrio o ciudad de entrega.'; $(miss).focus(); return; }
+    $('err').textContent=''; updateLink();
+  }
+});
+document.querySelector('.figs').addEventListener('animationend', e => { if(e.animationName==='jump') e.target.closest('button').classList.remove('jump'); });
+$('grid').addEventListener('animationend', e => { if(e.animationName==='pop' && e.target.classList.contains('card')) e.target.classList.remove('pop'); });
+$('scrim').addEventListener('click', close);
+document.addEventListener('keydown', e => { if(e.key==='Escape' && document.body.classList.contains('open')) close(); });
+['nombre','zona','nota'].forEach(id => $(id).addEventListener('input', () => { $('err').textContent=''; updateLink(); }));
+$('form').addEventListener('submit', e => e.preventDefault());
+
+// Bloquecitos que caen en el hero
+if(!reduced){
+  const colors = ['#FF4757','#FFC93C','#22C07A','#8B5CF6','#fff','#FF7A1A'];
+  const hero = $('hero');
+  for(let i=0;i<14;i++){
+    const b = document.createElement('span');
+    b.className = 'fall'; b.setAttribute('aria-hidden','true');
+    b.style.cssText = `left:${(i*7.3+Math.random()*5)%100}%;background:${colors[i%colors.length]};animation-duration:${7+Math.random()*7}s;animation-delay:${-Math.random()*12}s;scale:${.7+Math.random()*.6}`;
+    hero.prepend(b);
+  }
+}
+// Aparecer al hacer scroll
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(en => { if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }),{threshold:.15}) : null;
+document.querySelectorAll('.rv').forEach(el => io ? io.observe(el) : el.classList.add('in'));
+
+renderChips(); renderGrid(); renderCart();
+// Primera aparición del catálogo con efecto escalonado al entrar en pantalla
+if(io && !reduced){
+  const g = new IntersectionObserver(es => { if(es[0].isIntersecting){ applyFilter(false); g.disconnect(); } },{threshold:.05});
+  document.querySelectorAll('.card').forEach(c=>c.style.opacity=0);
+  g.observe($('grid'));
+  $('grid').addEventListener('animationstart', e => { if(e.target.classList.contains('card')) e.target.style.opacity=''; });
+}
+}
+</script>
+<script src="js/modelos.js"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+// Visor 3D compartido: arma cada figura con bloques a partir de window.MODELOS
+// (cuadrícula frontal tomada de la caja) y la muestra en la tarjeta volteada.
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+} catch (e) { renderer = null; }
+
+if (renderer && window.MODELOS) {
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene();
+  scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+  const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(4, 8, 10); scene.add(sun);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a7aa8, 0.6));
+
+  const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 200);
+  camera.position.set(0, 2.5, 26);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableZoom = false; controls.enablePan = false; controls.enableDamping = true;
+  controls.minPolarAngle = Math.PI * 0.25; controls.maxPolarAngle = Math.PI * 0.62;
+  controls.target.set(0, 0, 0);
+
+  const brick = new RoundedBoxGeometry(0.97, 0.97, 0.97, 2, 0.1);
+  const stud = new THREE.CylinderGeometry(0.27, 0.27, 0.18, 16); stud.translate(0, 0.57, 0);
+  const material = new THREE.MeshStandardMaterial({ roughness: 0.32, metalness: 0, envMapIntensity: 0.8 });
+  const cache = new Map();
+  const pivot = new THREE.Group(); scene.add(pivot);
+
+  const build = (id) => {
+    const { pal, rows } = window.MODELOS[id];
+    const H = rows.length, W = Math.max(...rows.map(r => r.length));
+    const at = (r, c) => (r >= 0 && r < H && c >= 0 && c < W && rows[r][c] && rows[r][c] !== '.') ? rows[r][c] : null;
+    // Distancia al borde de la silueta → profundidad redondeada
+    const dist = rows.map((_, r) => Array.from({ length: W }, (_, c) => at(r, c) ? Infinity : 0));
+    const q = [];
+    for (let r = 0; r < H; r++) for (let c = 0; c < W; c++) {
+      if (!at(r, c)) continue;
+      if ([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dr, dc]) => !at(r + dr, c + dc))) { dist[r][c] = 1; q.push([r, c]); }
+    }
+    for (let i = 0; i < q.length; i++) {
+      const [r, c] = q[i];
+      for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const rr = r + dr, cc = c + dc;
+        if (at(rr, cc) && dist[rr][cc] > dist[r][c] + 1) { dist[rr][cc] = dist[r][c] + 1; q.push([rr, cc]); }
+      }
+    }
+    const maxH = Math.max(2, Math.round(W * 0.19));
+    const half = (r, c) => at(r, c) ? Math.min(maxH, Math.ceil(dist[r][c] * 0.85)) : -1;
+    // Color de costados y espalda: el color dominante alrededor (sin ojos ni detalles)
+    const mode = (r, c) => {
+      const n = {};
+      for (let dr = -2; dr <= 2; dr++) for (let dc = -2; dc <= 2; dc++) { const k = at(r + dr, c + dc); if (k) n[k] = (n[k] || 0) + 1; }
+      return Object.keys(n).sort((a, b) => n[b] - n[a])[0];
+    };
+    // Mitad trasera: prioriza los colores de arriba (pelo, sombrero) para la nuca
+    const back = (r, c) => {
+      const n = {};
+      for (let dr = -8; dr <= 1; dr++) for (let dc = -3; dc <= 3; dc++) { const k = at(r + dr, c + dc); if (k) n[k] = (n[k] || 0) + 1 + (dr < -1 ? 2 : 0); }
+      return Object.keys(n).sort((x, y) => n[y] - n[x])[0];
+    };
+    const occ = (r, c, z) => at(r, c) && Math.abs(z) <= half(r, c);
+    const cubes = [], studs = [];
+    for (let r = 0; r < H; r++) for (let c = 0; c < W; c++) {
+      if (!at(r, c)) continue;
+      const h = half(r, c), side = mode(r, c), rear = back(r, c);
+      for (let z = -h; z <= h; z++) {
+        const visible = !occ(r - 1, c, z) || !occ(r + 1, c, z) || !occ(r, c - 1, z) || !occ(r, c + 1, z) || Math.abs(z) === h;
+        if (!visible) continue;
+        const key = z === h ? at(r, c) : z >= 0 ? side : rear;
+        const v = { x: c - (W - 1) / 2, y: (H - 1) / 2 - r, z, color: pal[key] || '#cccccc' };
+        cubes.push(v);
+        if (!occ(r - 1, c, z)) studs.push(v);
+      }
+    }
+    // Ordenar de abajo hacia arriba para la animación de armado
+    const order = (a, b) => a.y - b.y || a.z - b.z;
+    cubes.sort(order); studs.sort(order);
+    const make = (geo, list) => {
+      const m = new THREE.InstancedMesh(geo, material, list.length);
+      const mat = new THREE.Matrix4(), col = new THREE.Color();
+      list.forEach((v, i) => { mat.makeTranslation(v.x, v.y, v.z); m.setMatrixAt(i, mat); m.setColorAt(i, col.set(v.color)); });
+      m.instanceMatrix.needsUpdate = true; m.instanceColor.needsUpdate = true;
+      return m;
+    };
+    const group = new THREE.Group();
+    const cm = make(brick, cubes), sm = make(stud, studs);
+    group.add(cm, sm);
+    group.scale.setScalar(12 / Math.max(H, W * 0.9));
+    return { group, cm, sm, nc: cubes.length, ns: studs.length, ys: cubes.map(v => v.y), sy: studs.map(v => v.y), minY: -(H - 1) / 2, maxY: (H - 1) / 2 };
+  };
+
+  let active = null, host = null, raf = 0, t0 = 0, lastTouch = -1e9, token = 0;
+  controls.addEventListener('start', () => { lastTouch = performance.now(); });
+  controls.addEventListener('end', () => { lastTouch = performance.now(); });
+
+  const resize = () => {
+    if (!host) return;
+    const s = host.clientWidth || 300;
+    renderer.setSize(s, s, false); camera.aspect = 1; camera.updateProjectionMatrix();
+  };
+  const countBelow = (arr, y) => { let lo = 0, hi = arr.length; while (lo < hi) { const m = (lo + hi) >> 1; if (arr[m] <= y) lo = m + 1; else hi = m; } return lo; };
+
+  const tick = (now) => {
+    raf = requestAnimationFrame(tick);
+    if (!active) return;
+    const t = (now - t0) / 1000;
+    // Armado capa por capa
+    const k = reduced ? 1 : Math.min(1, t / 1.1);
+    const yCut = active.minY + (active.maxY - active.minY + 1) * (1 - Math.pow(1 - k, 2));
+    active.cm.count = k >= 1 ? active.nc : countBelow(active.ys, yCut);
+    active.sm.count = k >= 1 ? active.ns : countBelow(active.sy, yCut);
+    // Vaivén suave mientras nadie la toca
+    if (!reduced && now - lastTouch > 2500) pivot.rotation.y = Math.sin(t * 0.7) * 0.55 + (k < 1 ? (1 - k) * 2.2 : 0);
+    controls.update();
+    renderer.render(scene, camera);
+  };
+
+  window.Visor3D = {
+    show(id, el) {
+      if (!window.MODELOS[id]) return;
+      token++;
+      if (!cache.has(id)) cache.set(id, build(id));
+      if (active) pivot.remove(active.group);
+      active = cache.get(id); pivot.add(active.group);
+      host = el; el.appendChild(renderer.domElement); el.closest('.card').classList.add('has3d');
+      pivot.rotation.set(0, 0, 0); camera.position.set(0, 2.5, 26); controls.update();
+      resize(); t0 = performance.now(); lastTouch = -1e9;
+      if (!raf) raf = requestAnimationFrame(tick);
+    },
+    hide(el) {
+      if (host !== el) return;
+      el.closest('.card').classList.remove('has3d');
+      const my = token;
+      // Dejar terminar el giro de la tarjeta antes de soltar el lienzo
+      setTimeout(() => {
+        if (host !== el || token !== my) return;
+        cancelAnimationFrame(raf); raf = 0;
+        if (renderer.domElement.parentNode === el) el.removeChild(renderer.domElement);
+        if (active) pivot.remove(active.group);
+        active = null; host = null;
+      }, 500);
+    }
+  };
+  addEventListener('resize', resize);
+}
+</script>
+</body>
+</html>

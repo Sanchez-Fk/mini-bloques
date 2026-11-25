@@ -1,0 +1,35 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "marquee",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-25T22:50:02.342Z",
+        "reason": "Claude: decorative aria-hidden toy-store ribbon; user asked for animations"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-25T22:50:02.351Z",
+        "reason": "Claude: warm baseplate background is the deliberate toy-shop palette"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-25T22:50:02.361Z",
+        "reason": "Claude: scrolling ribbon text is intentionally edge-to-edge"
+      }
+    ]
+  }
+}
