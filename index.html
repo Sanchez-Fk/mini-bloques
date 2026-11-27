@@ -119,6 +119,8 @@ button{font:inherit;cursor:pointer;color:inherit}
 /* ---------- Catálogo ---------- */
 .shop{padding-block:clamp(48px,6vw,80px)}
 .chips{display:flex;flex-wrap:wrap;gap:10px}
+.shop .secth{flex-direction:column;flex-wrap:nowrap;align-items:stretch}
+.chip{flex:0 0 auto;white-space:nowrap}
 .chip{min-height:44px;padding:0 18px;border-radius:999px;border:3px solid var(--ink);background:#fff;font-weight:600;box-shadow:0 4px 0 var(--ink);transition:transform .12s var(--out),box-shadow .12s var(--out),background .2s}
 .chip:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
 .chip[aria-pressed=true]{background:var(--yellow)}
@@ -164,6 +166,17 @@ button{font:inherit;cursor:pointer;color:inherit}
 .s-dbz{--tone:#C24E00;--tint:#FFE6CC}
 .s-op{--tone:#1A66CF;--tint:#D9ECFF}
 .s-gar{--tone:#A86F00;--tint:#FFF2BF}
+.s-ds{--tone:#0E7C6B;--tint:#D2F2EA}
+.s-nar{--tone:#B23A0E;--tint:#FFE1D4}
+.s-pok{--tone:#8A6400;--tint:#FFF0B3}
+.s-vg{--tone:#2E7D32;--tint:#DDF3DD}
+.s-dis{--tone:#5B3FC4;--tint:#E6E0FF}
+.s-hero{--tone:#B0122C;--tint:#FFDCE1}
+.s-sw{--tone:#3A3F55;--tint:#E3E5EE}
+.s-san{--tone:#B0397A;--tint:#FFE0F0}
+.s-simp{--tone:#0F6FA8;--tint:#D8EEFA}
+.s-chavo{--tone:#7A4E1D;--tint:#F5E6D3}
+.s-mas{--tone:#6A5C80;--tint:#ECE6F5}
 
 /* ---------- Footer ---------- */
 footer{background:var(--ink);color:#DCD3EC;padding-block:44px 90px;margin-top:20px;position:relative}
@@ -189,6 +202,7 @@ footer a.wa{--c:var(--wa);--d:var(--waD)}
 .it{display:grid;grid-template-columns:68px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;border-bottom:2px dashed var(--line);animation:slideIn .4s var(--out) both}
 @keyframes slideIn{from{opacity:0;transform:translateX(24px)}}
 .it img{width:68px;height:68px;border-radius:14px;object-fit:contain;padding:4px;background:var(--tint);border:2px solid var(--ink)}
+.it img.isbox{object-fit:cover;padding:0}
 .it b{display:block;font-size:16px}.it small{color:var(--soft);font-size:13px}
 .it .qty{width:116px;min-height:40px;border-width:2px;animation:none}.it .qty button{width:36px;height:36px;font-size:20px}
 .rm{border:0;background:none;color:var(--soft);font-size:13px;text-decoration:underline;padding:4px 0;min-height:32px}
@@ -218,6 +232,8 @@ footer a.wa{--c:var(--wa);--d:var(--waD)}
   .awning{height:52px}.logo{font-size:16px}.logo i{grid-template-columns:repeat(2,10px)}.logo i b{width:10px;height:10px}
   .bar .cartbtn .lbl{display:none}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
+  .chips{flex-wrap:nowrap;overflow-x:auto;margin-inline:-16px;padding:4px 16px 10px;scrollbar-width:none;scroll-snap-type:x proximity}
+  .chips::-webkit-scrollbar{display:none}.chip{scroll-snap-align:start}
   .card{box-shadow:0 6px 0 var(--ink);border-width:2px}
   .card h3{font-size:16px}.card .b{padding:10px 10px 12px}.stage{margin:6px 6px 0}
   .flipbtn .t{display:none}.flipbtn{padding:0 9px}.drag{display:none}
@@ -246,7 +262,7 @@ footer a.wa{--c:var(--wa);--d:var(--waD)}
         <h1><span class="w" style="animation-delay:.05s">Arma</span> <span class="w" style="animation-delay:.12s">tu</span> <span class="w" style="animation-delay:.19s">personaje</span> <span class="w" style="animation-delay:.26s">favorito,</span> <span class="w y" style="animation-delay:.4s">bloque</span> <span class="w y" style="animation-delay:.47s">a</span> <span class="w y" style="animation-delay:.54s">bloque</span></h1>
         <p>Figuras de mini bloques con más de 400 piezas por caja. Elige las que quieras, agrégalas al carrito y envíame el pedido por WhatsApp.</p>
         <div class="ctas"><a class="brick" href="#catalogo">Ver catálogo</a><a class="brick" style="--c:#fff;--d:rgba(36,22,61,.25);color:var(--ink)" href="#como">¿Cómo pedir?</a></div>
-        <div class="facts"><span><b>14</b> personajes</span><span><b>442–716</b> piezas</span><span>Edad <b>6+</b></span></div>
+        <div class="facts"><span><b id="nPers">80</b> personajes</span><span><b id="rangoPz">442–815</b> piezas</span><span>Edad <b>6+</b></span></div>
       </div>
       <div class="shelfwrap">
         <div class="figs" aria-label="Algunas figuras de la tienda (toca una para hacerla saltar)">
@@ -259,8 +275,8 @@ footer a.wa{--c:var(--wa);--d:var(--waD)}
     </div>
   </section>
   <div class="ribbon" aria-hidden="true"><div>
-    <span>Más de 400 piezas por caja</span><span>Pedidos por WhatsApp</span><span>Ideal para regalar</span><span>Dragon Ball Z</span><span>One Piece</span><span>Garfield</span>
-    <span>Más de 400 piezas por caja</span><span>Pedidos por WhatsApp</span><span>Ideal para regalar</span><span>Dragon Ball Z</span><span>One Piece</span><span>Garfield</span>
+    <span>Más de 400 piezas por caja</span><span>Pedidos por WhatsApp</span><span>Dragon Ball Z</span><span>One Piece</span><span>Demon Slayer</span><span>Pokémon</span><span>Disney</span><span>El Chavo</span><span>Los Simpson</span><span>Marvel</span>
+    <span>Más de 400 piezas por caja</span><span>Pedidos por WhatsApp</span><span>Dragon Ball Z</span><span>One Piece</span><span>Demon Slayer</span><span>Pokémon</span><span>Disney</span><span>El Chavo</span><span>Los Simpson</span><span>Marvel</span>
   </div></div>
 </header>
 
@@ -275,7 +291,7 @@ footer a.wa{--c:var(--wa);--d:var(--waD)}
 
 <main class="wrap shop" id="catalogo">
   <div class="secth rv">
-    <div><h2>Catálogo</h2><p>Toca “Ver en 3D” para ver el personaje armado y girarlo.</p></div>
+    <div><h2>Catálogo</h2><p>Filtra por serie. En las figuras con “Ver en 3D” puedes ver el personaje armado y girarlo.</p></div>
     <div class="chips" id="chips" role="group" aria-label="Filtrar por serie"></div>
   </div>
   <div class="grid" id="grid"></div>
@@ -311,7 +327,9 @@ footer a.wa{--c:var(--wa);--d:var(--waD)}
 const WHATSAPP = '573052624583';
 // Precio en pesos de cada producto. Déjalo en null para mostrar "Precio por WhatsApp".
 // fig = figura renderizada en bloques (img/figuras), box = foto real de la caja.
+// C(...) = producto con solo la foto de la caja (aún sin figura 3D). pz = null si la caja no muestra las piezas.
 const P = (id,name,serie,pz,price=null)=>({id,name,serie,pz,price,fig:'img/figuras/'+id+'.webp',box:'img/'+id+'.jpg'});
+const C = (id,name,serie,pz,price=null)=>({...P(id,name,serie,pz,price),fig:null});
 const PRODUCTS = [
   P('majin-buu','Majin Buu','Dragon Ball Z',580),
   P('androide-18','Androide N18','Dragon Ball Z',586),
@@ -322,13 +340,80 @@ const PRODUCTS = [
   P('picoro','Picoro','Dragon Ball Z',687),
   P('gohan','Gohan','Dragon Ball Z',598),
   P('king-cold','King Cold','Dragon Ball Z',555),
+  C('kaiosama','Kaiosama','Dragon Ball Z',588),
+  C('androide-17','Androide N17','Dragon Ball Z',581),
+  C('androide-19','Androide N19','Dragon Ball Z',581),
+  C('androide-20','Androide N20','Dragon Ball Z',593),
+  C('maestro-karin','Maestro Karin','Dragon Ball Z',619),
+  C('chaoz','Chaoz','Dragon Ball Z',522),
+  C('tao-pai-pai','Tao Pai Pai','Dragon Ball Z',598),
+  C('mester-popo','Mr. Popo','Dragon Ball Z',604),
+  C('bulma','Bulma','Dragon Ball Z',653),
+  C('uranai-baba','Uranai Baba','Dragon Ball Z',615),
+  C('babidi','Babidi','Dragon Ball Z',567),
+  C('zarbon','Zarbon','Dragon Ball Z',588),
+  C('dodoria','Dodoria','Dragon Ball Z',607),
+  C('capitan-ginyu','Capitán Ginyu','Dragon Ball Z',603),
+  C('recoome','Recoome','Dragon Ball Z',617),
+  C('burter','Burter','Dragon Ball Z',605),
+  C('jeice','Jeice','Dragon Ball Z',603),
+  C('gurdo','Gurdo','Dragon Ball Z',605),
   P('luffy','Luffy','One Piece',666),
   P('sanji','Sanji','One Piece',442),
   P('nami','Nami','One Piece',618),
   P('trafalgar','Trafalgar','One Piece',716),
+  C('franky','Franky','One Piece',517),
+  C('portgas','Portgas D. Ace','One Piece',612),
+  C('nico-robin','Nico Robin','One Piece',491),
+  C('nezuko','Nezuko','Demon Slayer',505),
+  C('inosuke','Inosuke','Demon Slayer',549),
+  C('kyojuro','Kyojuro','Demon Slayer',567),
+  C('tengen','Tengen','Demon Slayer',543),
+  C('giyu','Giyu','Demon Slayer',521),
+  C('naruto','Naruto','Naruto',478),
+  C('kakashi','Kakashi','Naruto',523),
+  C('pikachu','Pikachu','Pokémon',564),
+  C('squirtle','Squirtle','Pokémon',577),
+  C('bulbasaur','Bulbasaur','Pokémon',528),
+  C('mario','Mario','Videojuegos',null),
+  C('donkey-kong','Donkey Kong','Videojuegos',541),
+  C('toad','Toad','Videojuegos',610),
+  C('minecraft','Creeper','Videojuegos',502),
+  C('plantas-vs-zombies','Plantas vs. Zombies','Videojuegos',616),
+  C('stitch','Stitch','Disney y Pixar',815),
+  C('winnie-pooh','Winnie Pooh','Disney y Pixar',581),
+  C('timon','Timón','Disney y Pixar',649),
+  C('pumba','Pumba','Disney y Pixar',643),
+  C('lucifer','Lucifer','Disney y Pixar',601),
+  C('sullivan','Sullivan','Disney y Pixar',580),
+  C('boo','Boo','Disney y Pixar',662),
+  C('marciano','Marciano','Disney y Pixar',647),
+  C('miles-morales','Miles Morales','Marvel y DC',619),
+  C('doctor-strange','Doctor Strange','Marvel y DC',655),
+  C('joker','Joker','Marvel y DC',672),
+  C('r2-d2','R2-D2','Star Wars',604),
+  C('darth-vader','Darth Vader','Star Wars',591),
+  C('kuromi','Kuromi','Sanrio',583),
+  C('my-melody','My Melody','Sanrio',627),
+  C('homero','Homero','Los Simpson',576),
+  C('bart','Bart','Los Simpson',580),
+  C('chapulin-colorado','Chapulín Colorado','El Chavo',607),
+  C('don-ramon','Don Ramón','El Chavo',550),
+  C('profesor-jirafales','Profesor Jirafales','El Chavo',584),
+  C('dona-florinda','Doña Florinda','El Chavo',619),
+  C('chilindrina','La Chilindrina','El Chavo',627),
   P('odie','Odie','Garfield',613),
+  C('garfield','Garfield','Garfield',644),
+  C('chase','Chase','Más personajes',536),
+  C('minion','Minion','Más personajes',666),
+  C('don-cangrejo','Don Cangrejo','Más personajes',559),
+  C('angelica','Angélica','Más personajes',602),
+  C('furia-luminosa','Furia Luminosa','Más personajes',608),
+  C('panda','Panda','Más personajes',552),
+  C('jason','Jason','Más personajes',631),
 ];
-const SERIE_CLASS = {'Dragon Ball Z':'s-dbz','One Piece':'s-op','Garfield':'s-gar'};
+const SERIE_CLASS = {'Dragon Ball Z':'s-dbz','One Piece':'s-op','Garfield':'s-gar','Demon Slayer':'s-ds','Naruto':'s-nar','Pokémon':'s-pok',
+  'Videojuegos':'s-vg','Disney y Pixar':'s-dis','Marvel y DC':'s-hero','Star Wars':'s-sw','Sanrio':'s-san','Los Simpson':'s-simp','El Chavo':'s-chavo','Más personajes':'s-mas'};
 const byId = Object.fromEntries(PRODUCTS.map(p=>[p.id,p]));
 const fmt = n => '$' + n.toLocaleString('es-CO');
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -348,11 +433,11 @@ const renderGrid = () => {
     <article class="card ${SERIE_CLASS[p.serie]||''}" data-id="${p.id}" data-serie="${esc(p.serie)}">
       <div class="stage">
         <div class="flip">
-          <div class="face front"><img class="boximg" src="${p.box}" alt="Caja de mini bloques de ${esc(p.name)}" loading="lazy" width="450" height="450"></div>
-          <div class="face back"><img class="fig" src="${p.fig}" alt="Figura armada de ${esc(p.name)}" loading="lazy" width="640" height="640"><span class="drag">Arrastra para girar</span></div>
+          <div class="face front"><img class="boximg" src="${p.box}" alt="Caja de mini bloques de ${esc(p.name)}" loading="lazy" decoding="async" width="450" height="450"></div>
+          ${p.fig ? `<div class="face back"><img class="fig" src="${p.fig}" alt="Figura armada de ${esc(p.name)}" loading="lazy" width="640" height="640"><span class="drag">Arrastra para girar</span></div>` : ''}
         </div>
-        <span class="pz">${p.pz} piezas</span>
-        <button class="flipbtn" data-flip="${p.id}" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg><span class="t">Ver en 3D</span></button>
+        ${p.pz ? `<span class="pz">${p.pz} piezas</span>` : ''}
+        ${p.fig ? `<button class="flipbtn" data-flip="${p.id}" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg><span class="t">Ver en 3D</span></button>` : ''}
       </div>
       <div class="b"><span class="serie">${esc(p.serie)}</span><h3>${esc(p.name)}</h3>
       <span class="price">${p.price!=null?fmt(p.price):'Precio por WhatsApp'} · 6+</span>
@@ -366,7 +451,7 @@ const applyFilter = (first) => {
     const show = filter==='Todos' || c.dataset.serie===filter;
     c.hidden = !show;
     c.classList.remove('pop');
-    if(show && !reduced){ void c.offsetWidth; c.style.setProperty('--k', k++); if(!first) c.classList.add('pop'); }
+    if(show && !reduced){ void c.offsetWidth; c.style.setProperty('--k', Math.min(k++, 14)); if(!first) c.classList.add('pop'); }
   });
 };
 const updateControls = () => document.querySelectorAll('.card').forEach(c => { const ctl = c.querySelector('.ctl'), html = control(byId[c.dataset.id]); if(ctl.dataset.h!==html){ ctl.innerHTML = html; ctl.dataset.h = html; } });
@@ -379,7 +464,7 @@ const renderCart = () => {
   const n = count();
   $('countTop').textContent = n; $('countFloat').textContent = n; $('openFloat').hidden = n===0;
   $('items').innerHTML = n ? lines().map(({p,q},i)=>`
-    <div class="it ${SERIE_CLASS[p.serie]||''}" style="animation-delay:${i*40}ms"><img src="${p.fig}" alt=""><div><b>${esc(p.name)}</b><small>${esc(p.serie)} · ${p.pz} piezas${p.price!=null?' · '+fmt(p.price):''}</small><br><button class="rm" data-rm="${p.id}">Quitar</button></div>
+    <div class="it ${SERIE_CLASS[p.serie]||''}" style="animation-delay:${i*40}ms"><img src="${p.fig||p.box}" alt=""${p.fig?'':' class="isbox"'}><div><b>${esc(p.name)}</b><small>${esc(p.serie)}${p.pz?' · '+p.pz+' piezas':''}${p.price!=null?' · '+fmt(p.price):''}</small><br><button class="rm" data-rm="${p.id}">Quitar</button></div>
     <div class="qty"><button data-dec="${p.id}" aria-label="Quitar uno de ${esc(p.name)}">−</button><span>${q}</span><button data-inc="${p.id}" aria-label="Agregar otro ${esc(p.name)}">+</button></div></div>`).join('')
     : `<div class="empty"><img src="img/figuras/odie.webp" alt="">Tu carrito está vacío.<br>Agrega figuras desde el catálogo.</div>`;
   $('tot').innerHTML = n ? `<span>${n} ${n===1?'figura':'figuras'}</span><span>${allPriced()?fmt(total()):'Total por confirmar'}</span>` : '';
@@ -448,7 +533,7 @@ document.addEventListener('click', e => {
   }
   else if(t.dataset.dec) change(t.dataset.dec,-1);
   else if(t.dataset.rm){ delete cart[t.dataset.rm]; save(); renderCart(); updateControls(); bump(); }
-  else if(t.dataset.s){ filter=t.dataset.s; renderChips(); applyFilter(false); }
+  else if(t.dataset.s){ filter=t.dataset.s; renderChips(); applyFilter(false); $('chips').querySelector('[aria-pressed=true]').scrollIntoView({block:'nearest',inline:'nearest',behavior:reduced?'auto':'smooth'}); }
   else if(t.dataset.flip){
     const c=t.closest('.card'), on=!c.classList.contains('flipped');
     // Solo una tarjeta volteada a la vez: comparten un único visor 3D
@@ -487,6 +572,8 @@ if(!reduced){
 const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(en => { if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }),{threshold:.15}) : null;
 document.querySelectorAll('.rv').forEach(el => io ? io.observe(el) : el.classList.add('in'));
 
+const pzs = PRODUCTS.map(p=>p.pz).filter(Boolean);
+$('nPers').textContent = PRODUCTS.length; $('rangoPz').textContent = Math.min(...pzs)+'–'+Math.max(...pzs);
 renderChips(); renderGrid(); renderCart();
 // Primera aparición del catálogo con efecto escalonado al entrar en pantalla
 if(io && !reduced){
