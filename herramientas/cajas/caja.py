@@ -50,22 +50,36 @@ def fondo(n, mask_cells, g):
     for (r, c) in mask_cells: cv2.rectangle(m, (int(c*p)-6, int(r*p)-6), (int((c+1)*p)+6, int((r+1)*p)+6), 255, -1)
     for x0, y0, x1, y1 in ((.06, .02, .94, .22), (.02, .66, .3, .99), (.66, .6, .99, .97)):
         cv2.rectangle(m, (int(x0*B), int(y0*B)), (int(x1*B), int(y1*B)), 255, -1)
-    small = cv2.resize(src, (B//4, B//4), interpolation=cv2.INTER_AREA)
-    sm = cv2.resize(m, (B//4, B//4), interpolation=cv2.INTER_NEAREST)
-    small = cv2.inpaint(small, sm, 9, cv2.INPAINT_TELEA)
-    bg = cv2.GaussianBlur(cv2.resize(small, (B, B), interpolation=cv2.INTER_CUBIC), (0, 0), 14)
-    bg = Image.fromarray(cv2.cvtColor(bg, cv2.COLOR_BGR2RGB))
-    bg = ImageEnhance.Color(bg).enhance(1.25); bg = ImageEnhance.Contrast(bg).enhance(1.08)
-    # destellos y estrellas como en las cajas originales
-    rnd = random.Random(n); glow = Image.new('RGBA', (B, B), (0, 0, 0, 0)); d = ImageDraw.Draw(glow)
-    for _ in range(26):
-        x, y, s = rnd.uniform(0, B), rnd.uniform(0, B), rnd.uniform(6, 22)
-        d.ellipse([x-s, y-s, x+s, y+s], fill=(255, 255, 255, rnd.randint(25, 60)))
-    glow = glow.filter(ImageFilter.GaussianBlur(5)); d = ImageDraw.Draw(glow)
+    # colores de la caja original (sin figura ni textos): tono claro al centro, oscuro en los bordes.
+    # Se dibuja un fondo nítido nuevo en vez de desenfocar la foto (que dejaba la figura vieja como mancha).
+    px = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)[m == 0].astype(float)
+    hsv = cv2.cvtColor(np.uint8([px]), cv2.COLOR_RGB2HSV)[0].astype(float)
+    order = np.argsort(hsv[:, 2]); k = len(order)
+    def tono(a, b, v):
+        c = cv2.cvtColor(np.uint8([[px[order[int(k*a):int(k*b)]].mean(0)]]), cv2.COLOR_RGB2HSV)[0, 0].astype(float)
+        c[1] = min(255, c[1] * 1.2); c[2] = v
+        return np.array(cv2.cvtColor(np.uint8([[c]]), cv2.COLOR_HSV2RGB)[0, 0], float)
+    light, dark = tono(.6, .9, 235), tono(.1, .4, 120)
+    S = B * SS; yy, xx = np.mgrid[0:S, 0:S] / S
+    t = np.clip(np.hypot(xx - .5, (yy - .44) * 1.1) / .72, 0, 1)[..., None] ** 1.25
+    bg = Image.fromarray(np.uint8(light + (dark - light) * t)).convert('RGBA')
+    rnd = random.Random(n); fx = Image.new('RGBA', (S, S), (0, 0, 0, 0)); d = ImageDraw.Draw(fx)
+    # rayos suaves desde el centro
+    cx, cy, R = S * .5, S * .44, S * 1.2; a0 = rnd.uniform(0, 360)
+    for i in range(0, 20, 2):
+        a, b = math.radians(a0 + i * 18), math.radians(a0 + (i + 1) * 18)
+        d.polygon([(cx, cy), (cx + R*math.cos(a), cy + R*math.sin(a)), (cx + R*math.cos(b), cy + R*math.sin(b))], fill=(255, 255, 255, 16))
+    # destellos de cuatro puntas y estrellitas, nítidos
+    libre = lambda x, y: not (y < S*.24 or (x < S*.3 and y > S*.66) or (x > S*.66 and y > S*.68))
+    for _ in range(14):
+        x, y = rnd.uniform(0, S), rnd.uniform(0, S)
+        while not libre(x, y): x, y = rnd.uniform(0, S), rnd.uniform(0, S)
+        s = rnd.uniform(.012, .03) * S; w = s * .18
+        d.polygon([(x, y-s), (x+w, y-w), (x+s, y), (x+w, y+w), (x, y+s), (x-w, y+w), (x-s, y), (x-w, y-w)], fill=(255, 255, 255, rnd.randint(110, 200)))
     for _ in range(140):
-        x, y, s = rnd.uniform(0, B), rnd.uniform(0, B), rnd.choice((.8, 1, 1.2, 1.6, 2.2))
+        x, y, s = rnd.uniform(0, S), rnd.uniform(0, S), rnd.choice((.8, 1, 1.2, 1.6, 2.2)) * SS
         d.ellipse([x-s, y-s, x+s, y+s], fill=(255, 255, 255, rnd.randint(120, 230)))
-    bg = Image.alpha_composite(bg.convert('RGBA'), glow)
+    bg = Image.alpha_composite(bg, fx)
     return bg, np.asarray(bg.convert('RGB')).reshape(-1, 3).mean(0)
 
 def acento(avg):
@@ -88,7 +102,7 @@ def caja(n, titulo, pz, g):
     rows, pal = g['rows'], g['pal']
     cells = [(g['r0']+r, g['c0']+c) for r, row in enumerate(rows) for c, ch in enumerate(row) if ch != '.']
     bg, avg = fondo(n, cells, g)
-    S = B * SS; can = bg.resize((S, S), Image.BICUBIC)
+    S = B * SS; can = bg
     # personaje: centrado horizontalmente, apoyado abajo, sin tapar el título
     h, w = len(rows), max(map(len, rows))
     C = int(min(S * .62 / h, S * .44 / w))

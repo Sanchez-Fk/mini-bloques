@@ -1,0 +1,322 @@
+{
+ "majin-buu": {
+  "t": "Majin Buu",
+  "pz": 580
+ },
+ "androide-18": {
+  "t": "Androide N18",
+  "pz": 586
+ },
+ "rochi": {
+  "t": "Rochi",
+  "pz": 613
+ },
+ "mr-satan": {
+  "t": "Mr. Satan",
+  "pz": 608
+ },
+ "trunks": {
+  "t": "Trunks",
+  "pz": 597
+ },
+ "crillin": {
+  "t": "Crillin",
+  "pz": 687
+ },
+ "picoro": {
+  "t": "Picoro",
+  "pz": 687
+ },
+ "gohan": {
+  "t": "Gohan",
+  "pz": 598
+ },
+ "king-cold": {
+  "t": "King Cold",
+  "pz": 555
+ },
+ "kaiosama": {
+  "t": "Kaiosama",
+  "pz": 588
+ },
+ "androide-17": {
+  "t": "Androide N17",
+  "pz": 581
+ },
+ "androide-19": {
+  "t": "Androide N19",
+  "pz": 581
+ },
+ "androide-20": {
+  "t": "Androide N20",
+  "pz": 593
+ },
+ "maestro-karin": {
+  "t": "Maestro Karin",
+  "pz": 619
+ },
+ "chaoz": {
+  "t": "Chaoz",
+  "pz": 522
+ },
+ "tao-pai-pai": {
+  "t": "Tao Pai Pai",
+  "pz": 598
+ },
+ "mester-popo": {
+  "t": "Mr. Popo",
+  "pz": 604
+ },
+ "bulma": {
+  "t": "Bulma",
+  "pz": 653
+ },
+ "uranai-baba": {
+  "t": "Uranai Baba",
+  "pz": 615
+ },
+ "babidi": {
+  "t": "Babidi",
+  "pz": 567
+ },
+ "zarbon": {
+  "t": "Zarbon",
+  "pz": 588
+ },
+ "dodoria": {
+  "t": "Dodoria",
+  "pz": 607
+ },
+ "capitan-ginyu": {
+  "t": "Capitán Ginyu",
+  "pz": 603
+ },
+ "recoome": {
+  "t": "Recoome",
+  "pz": 617
+ },
+ "burter": {
+  "t": "Burter",
+  "pz": 605
+ },
+ "jeice": {
+  "t": "Jeice",
+  "pz": 603
+ },
+ "gurdo": {
+  "t": "Gurdo",
+  "pz": 605
+ },
+ "luffy": {
+  "t": "Luffy",
+  "pz": 666
+ },
+ "sanji": {
+  "t": "Sanji",
+  "pz": 442
+ },
+ "nami": {
+  "t": "Nami",
+  "pz": 618
+ },
+ "trafalgar": {
+  "t": "Trafalgar",
+  "pz": 716
+ },
+ "franky": {
+  "t": "Franky",
+  "pz": 517
+ },
+ "portgas": {
+  "t": "Portgas D. Ace",
+  "pz": 612
+ },
+ "nico-robin": {
+  "t": "Nico Robin",
+  "pz": 491
+ },
+ "nezuko": {
+  "t": "Nezuko",
+  "pz": 505
+ },
+ "inosuke": {
+  "t": "Inosuke",
+  "pz": 549
+ },
+ "kyojuro": {
+  "t": "Kyojuro",
+  "pz": 567
+ },
+ "tengen": {
+  "t": "Tengen",
+  "pz": 543
+ },
+ "giyu": {
+  "t": "Giyu",
+  "pz": 521
+ },
+ "naruto": {
+  "t": "Naruto",
+  "pz": 478
+ },
+ "kakashi": {
+  "t": "Kakashi",
+  "pz": 523
+ },
+ "pikachu": {
+  "t": "Pikachu",
+  "pz": 564
+ },
+ "squirtle": {
+  "t": "Squirtle",
+  "pz": 577
+ },
+ "bulbasaur": {
+  "t": "Bulbasaur",
+  "pz": 528
+ },
+ "mario": {
+  "t": "Mario",
+  "pz": null
+ },
+ "donkey-kong": {
+  "t": "Donkey Kong",
+  "pz": 541
+ },
+ "toad": {
+  "t": "Toad",
+  "pz": 610
+ },
+ "minecraft": {
+  "t": "Creeper",
+  "pz": 502
+ },
+ "plantas-vs-zombies": {
+  "t": "Plantas vs. Zombies",
+  "pz": 616
+ },
+ "stitch": {
+  "t": "Stitch",
+  "pz": 815
+ },
+ "winnie-pooh": {
+  "t": "Winnie Pooh",
+  "pz": 581
+ },
+ "timon": {
+  "t": "Timón",
+  "pz": 649
+ },
+ "pumba": {
+  "t": "Pumba",
+  "pz": 643
+ },
+ "lucifer": {
+  "t": "Lucifer",
+  "pz": 601
+ },
+ "sullivan": {
+  "t": "Sullivan",
+  "pz": 580
+ },
+ "boo": {
+  "t": "Boo",
+  "pz": 662
+ },
+ "marciano": {
+  "t": "Marciano",
+  "pz": 647
+ },
+ "miles-morales": {
+  "t": "Miles Morales",
+  "pz": 619
+ },
+ "doctor-strange": {
+  "t": "Doctor Strange",
+  "pz": 655
+ },
+ "joker": {
+  "t": "Joker",
+  "pz": 672
+ },
+ "r2-d2": {
+  "t": "R2-D2",
+  "pz": 604
+ },
+ "darth-vader": {
+  "t": "Darth Vader",
+  "pz": 591
+ },
+ "kuromi": {
+  "t": "Kuromi",
+  "pz": 583
+ },
+ "my-melody": {
+  "t": "My Melody",
+  "pz": 627
+ },
+ "homero": {
+  "t": "Homero",
+  "pz": 576
+ },
+ "bart": {
+  "t": "Bart",
+  "pz": 580
+ },
+ "chapulin-colorado": {
+  "t": "Chapulín Colorado",
+  "pz": 607
+ },
+ "don-ramon": {
+  "t": "Don Ramón",
+  "pz": 550
+ },
+ "profesor-jirafales": {
+  "t": "Profesor Jirafales",
+  "pz": 584
+ },
+ "dona-florinda": {
+  "t": "Doña Florinda",
+  "pz": 619
+ },
+ "chilindrina": {
+  "t": "La Chilindrina",
+  "pz": 627
+ },
+ "odie": {
+  "t": "Odie",
+  "pz": 613
+ },
+ "garfield": {
+  "t": "Garfield",
+  "pz": 644
+ },
+ "chase": {
+  "t": "Chase",
+  "pz": 536
+ },
+ "minion": {
+  "t": "Minion",
+  "pz": 666
+ },
+ "don-cangrejo": {
+  "t": "Don Cangrejo",
+  "pz": 559
+ },
+ "angelica": {
+  "t": "Angélica",
+  "pz": 602
+ },
+ "furia-luminosa": {
+  "t": "Furia Luminosa",
+  "pz": 608
+ },
+ "panda": {
+  "t": "Panda",
+  "pz": 552
+ },
+ "jason": {
+  "t": "Jason",
+  "pz": 631
+ }
+}
